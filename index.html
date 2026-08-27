@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portafolio Digital — Ética y Responsabilidad Social</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --color-bg:#FAF7F0;
+    --color-surface:#FFFFFF;
+    --color-ink:#1B2A4A;
+    --color-ink-soft:#3E4A63;
+    --color-accent:#8A6A22;
+    --color-accent-soft:#F1E8D2;
+    --color-line:#DBD3BE;
+    --color-danger:#8C2F2F;
+    --color-danger-bg:#F6E9E9;
+    --font-display:'Source Serif 4', Georgia, serif;
+    --font-body:'Public Sans', system-ui, -apple-system, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--color-bg); color:var(--color-ink); font-family:var(--font-body); line-height:1.55;}
+  .skip-link{position:absolute; left:-999px; top:auto; background:var(--color-ink); color:#fff; padding:12px 18px; z-index:100; border-radius:0 0 6px 0; font-weight:600;}
+  .skip-link:focus{left:0; top:0;}
+  a{color:var(--color-accent);}
+  a:hover{color:var(--color-ink);}
+  :focus-visible{outline:3px solid var(--color-accent); outline-offset:3px;}
+
+  header.portada{background:linear-gradient(180deg, var(--color-ink) 0%, #24365C 100%); color:#F6F3EA; padding:56px 24px 40px; text-align:center;}
+  .portada-inner{max-width:760px; margin:0 auto;}
+  .eyebrow{text-transform:uppercase; letter-spacing:0.14em; font-size:0.8rem; font-weight:600; color:#D9CBA0; margin:0 0 18px;}
+  header.portada h1{font-family:var(--font-display); font-size:clamp(2.1rem, 5vw, 3.2rem); font-weight:700; margin:0 0 10px;}
+  .curso{font-family:var(--font-display); font-size:1.3rem; font-style:italic; color:#E7DEC4; margin:0 0 28px;}
+  .sello{width:88px; height:88px; margin:0 auto 28px;}
+  dl.meta{display:grid; grid-template-columns:1fr; gap:14px; max-width:480px; margin:0 auto; text-align:left; border-top:1px solid rgba(246,243,234,0.25); padding-top:26px;}
+  dl.meta > div{display:grid; grid-template-columns:150px 1fr; gap:10px; align-items:baseline;}
+  dl.meta dt{font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:#C9BC93; font-weight:600; margin:0;}
+  dl.meta dd{margin:0; font-size:1.02rem; font-weight:500;}
+
+  nav.indice{max-width:760px; margin:0 auto; padding:24px 24px 0;}
+  nav.indice h2{font-family:var(--font-display); font-size:1.05rem; color:var(--color-ink-soft); margin:0 0 10px;}
+  nav.indice ul{list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:10px;}
+  nav.indice li a{display:inline-block; background:var(--color-surface); border:1px solid var(--color-line); padding:8px 14px; border-radius:999px; font-size:0.92rem; text-decoration:none; color:var(--color-ink);}
+  nav.indice li a:hover, nav.indice li a:focus-visible{border-color:var(--color-accent); color:var(--color-accent);}
+
+  main{max-width:760px; margin:0 auto; padding:28px 24px 80px;}
+  #mensaje-estado{color:var(--color-ink-soft); font-style:italic; text-align:center; padding:20px;}
+  #mensaje-error{display:none; background:var(--color-danger-bg); border:1px solid var(--color-danger); color:var(--color-danger); border-radius:10px; padding:16px 20px; margin-bottom:20px; font-weight:600;}
+
+  article.categoria{background:var(--color-surface); border:1px solid var(--color-line); border-radius:14px; padding:24px; margin-bottom:24px; scroll-margin-top:20px;}
+  .cat-encabezado{border-bottom:2px solid var(--color-accent-soft); padding-bottom:14px; margin-bottom:18px;}
+  .cat-encabezado h2{font-family:var(--font-display); font-size:1.2rem; margin:0; color:var(--color-ink);}
+  ul.entradas{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px;}
+  li.entrada{border:1px solid var(--color-line); border-radius:10px; padding:14px 16px; background:#FFFEFB; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;}
+  .entrada-info{display:flex; flex-direction:column; gap:2px;}
+  .entrada-titulo{font-weight:700; font-size:0.98rem;}
+  .entrada-fecha{font-size:0.8rem; color:var(--color-ink-soft); text-transform:uppercase; letter-spacing:0.03em;}
+  .badge{display:inline-block; background:var(--color-accent-soft); color:var(--color-accent); padding:3px 10px; border-radius:999px; font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin-right:8px;}
+  .entrada-descarga{font-weight:600; white-space:nowrap;}
+  p.sin-evidencias{color:var(--color-ink-soft); font-style:italic; font-size:0.92rem;}
+
+  footer{text-align:center; padding:28px 24px 40px; color:var(--color-ink-soft); font-size:0.86rem;}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
+
+<header class="portada" role="banner">
+  <div class="portada-inner">
+    <p class="eyebrow">Corporación Universitaria del Huila · CORHUILA</p>
+    <h1>Portafolio Digital</h1>
+    <p class="curso">Ética y Responsabilidad Social</p>
+
+    <svg class="sello" viewBox="0 0 100 100" role="img" aria-label="Sello institucional decorativo con una balanza, símbolo de la ética">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#D9CBA0" stroke-width="2"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="#D9CBA0" stroke-width="1"/>
+      <line x1="50" y1="28" x2="50" y2="62" stroke="#F6F3EA" stroke-width="2"/>
+      <line x1="32" y1="38" x2="68" y2="38" stroke="#F6F3EA" stroke-width="2"/>
+      <line x1="32" y1="38" x2="24" y2="52" stroke="#F6F3EA" stroke-width="1.5"/>
+      <line x1="32" y1="38" x2="40" y2="52" stroke="#F6F3EA" stroke-width="1.5"/>
+      <path d="M24 52 A8 8 0 0 0 40 52 Z" fill="none" stroke="#F6F3EA" stroke-width="1.5"/>
+      <line x1="68" y1="38" x2="60" y2="52" stroke="#F6F3EA" stroke-width="1.5"/>
+      <line x1="68" y1="38" x2="76" y2="52" stroke="#F6F3EA" stroke-width="1.5"/>
+      <path d="M60 52 A8 8 0 0 0 76 52 Z" fill="none" stroke="#F6F3EA" stroke-width="1.5"/>
+      <line x1="42" y1="63" x2="58" y2="63" stroke="#F6F3EA" stroke-width="2"/>
+    </svg>
+
+    <dl class="meta">
+      <div><dt>Estudiante</dt><dd>Angie Katerine Hernández Villamil</dd></div>
+      <div><dt>Programa</dt><dd>Negocios Internacionales</dd></div>
+      <div><dt>Facultad</dt><dd>Facultad de Ciencias Económicas y Administrativas</dd></div>
+      <div><dt>Docente</dt><dd>Katherine Bello Gómez</dd></div>
+    </dl>
+  </div>
+</header>
+
+<nav class="indice" aria-label="Índice de categorías del portafolio">
+  <h2>Contenido del portafolio</h2>
+  <ul id="lista-indice"></ul>
+</nav>
+
+<main id="contenido-principal">
+  <div id="mensaje-error"></div>
+  <p id="mensaje-estado">Cargando evidencias…</p>
+  <div id="categorias"></div>
+</main>
+
+<footer>
+  Portafolio digital de Angie Katerine Hernández Villamil — Negocios Internacionales — CORHUILA.
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // Estos dos valores ya están ajustados a la cuenta y repositorio de Angie.
+  var OWNER = "Angie20417";
+  var REPO = "Portafolio-Digital-Etica";
+  var CARPETA_RAIZ = "evidencias";
+
+  var listaIndice = document.getElementById("lista-indice");
+  var contenedorCategorias = document.getElementById("categorias");
+  var mensajeEstado = document.getElementById("mensaje-estado");
+  var mensajeError = document.getElementById("mensaje-error");
+
+  var meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+
+  function mostrarError(texto){
+    mensajeError.textContent = texto;
+    mensajeError.style.display = "block";
+  }
+
+  function slug(texto){
+    return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-");
+  }
+
+  function badgeParaArchivo(nombre){
+    var ext = (nombre.split(".").pop() || "").toLowerCase();
+    var mapa = { pdf:"PDF", doc:"Word", docx:"Word", ppt:"Presentación", pptx:"Presentación", xls:"Excel", xlsx:"Excel", jpg:"Imagen", jpeg:"Imagen", png:"Imagen", gif:"Imagen", mp4:"Video", mp3:"Audio", txt:"Texto" };
+    return mapa[ext] || "Archivo";
+  }
+
+  function interpretarNombre(nombreArchivo){
+    var sinExtension = nombreArchivo.replace(/\.[^.]+$/, "");
+    var coincide = sinExtension.match(/^(\d{4}-\d{2}-\d{2})\s*[-–]\s*(.+)$/);
+    if (coincide){
+      var partes = coincide[1].split("-");
+      var fechaLegible = partes[2] + " de " + (meses[parseInt(partes[1],10)-1] || partes[1]) + " de " + partes[0];
+      return { titulo: coincide[2], fecha: fechaLegible };
+    }
+    return { titulo: sinExtension, fecha: "" };
+  }
+
+  async function obtenerContenido(ruta){
+    var url = "https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/" + encodeURIComponent(ruta).replace(/%2F/g, "/");
+    var respuesta = await fetch(url, { headers: { "Accept": "application/vnd.github+json" } });
+    if (respuesta.status === 404){
+      return null;
+    }
+    if (!respuesta.ok){
+      throw new Error("GitHub respondió con estado " + respuesta.status);
+    }
+    return respuesta.json();
+  }
+
+  function crearEntradaHTML(archivo){
+    var info = interpretarNombre(archivo.name);
+    var li = document.createElement("li");
+    li.className = "entrada";
+
+    var contenedorInfo = document.createElement("div");
+    contenedorInfo.className = "entrada-info";
+
+    var titulo = document.createElement("span");
+    titulo.className = "entrada-titulo";
+    var badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = badgeParaArchivo(archivo.name);
+    titulo.appendChild(badge);
+    titulo.appendChild(document.createTextNode(info.titulo));
+    contenedorInfo.appendChild(titulo);
+
+    if (info.fecha){
+      var fecha = document.createElement("span");
+      fecha.className = "entrada-fecha";
+      fecha.textContent = info.fecha;
+      contenedorInfo.appendChild(fecha);
+    }
+
+    var enlace = document.createElement("a");
+    enlace.className = "entrada-descarga";
+    enlace.href = archivo.download_url;
+    enlace.target = "_blank";
+    enlace.rel = "noopener";
+    enlace.textContent = "Abrir " + archivo.name + " (se abre en una pestaña nueva)";
+
+    li.appendChild(contenedorInfo);
+    li.appendChild(enlace);
+    return li;
+  }
+
+  async function construirCategoria(carpeta){
+    var articulo = document.createElement("article");
+    articulo.className = "categoria";
+    var idCategoria = slug(carpeta.name);
+    articulo.id = idCategoria;
+
+    var encabezado = document.createElement("div");
+    encabezado.className = "cat-encabezado";
+    var titulo = document.createElement("h2");
+    titulo.textContent = carpeta.name;
+    encabezado.appendChild(titulo);
+    articulo.appendChild(encabezado);
+
+    var lista = document.createElement("ul");
+    lista.className = "entradas";
+
+    var archivos = await obtenerContenido(CARPETA_RAIZ + "/" + carpeta.name);
+    var archivosValidos = (archivos || []).filter(function(item){ return item.type === "file"; });
+
+    if (!archivosValidos.length){
+      var vacio = document.createElement("p");
+      vacio.className = "sin-evidencias";
+      vacio.textContent = "Todavía no hay evidencias en esta categoría.";
+      lista.appendChild(vacio);
+    } else {
+      archivosValidos.sort(function(a,b){ return a.name.localeCompare(b.name); });
+      archivosValidos.forEach(function(archivo){
+        lista.appendChild(crearEntradaHTML(archivo));
+      });
+    }
+
+    articulo.appendChild(lista);
+
+    var li = document.createElement("li");
+    var a = document.createElement("a");
+    a.href = "#" + idCategoria;
+    a.textContent = carpeta.name;
+    li.appendChild(a);
+    listaIndice.appendChild(li);
+
+    return articulo;
+  }
+
+  async function iniciar(){
+    try{
+      var raiz = await obtenerContenido(CARPETA_RAIZ);
+      mensajeEstado.style.display = "none";
+
+      if (!raiz){
+        var vacio = document.createElement("p");
+        vacio.className = "sin-evidencias";
+        vacio.style.textAlign = "center";
+        vacio.textContent = "Aún no se han publicado categorías en este portafolio.";
+        contenedorCategorias.appendChild(vacio);
+        return;
+      }
+
+      var carpetas = raiz.filter(function(item){ return item.type === "dir"; });
+      carpetas.sort(function(a,b){ return a.name.localeCompare(b.name); });
+
+      for (var i = 0; i < carpetas.length; i++){
+        var articulo = await construirCategoria(carpetas[i]);
+        contenedorCategorias.appendChild(articulo);
+      }
+
+      if (!carpetas.length){
+        var sinCategorias = document.createElement("p");
+        sinCategorias.className = "sin-evidencias";
+        sinCategorias.style.textAlign = "center";
+        sinCategorias.textContent = "Aún no se han publicado categorías en este portafolio.";
+        contenedorCategorias.appendChild(sinCategorias);
+      }
+    } catch(err){
+      mensajeEstado.style.display = "none";
+      mostrarError("No se pudo cargar el contenido del portafolio en este momento. Intenta recargar la página en unos minutos.");
+    }
+  }
+
+  iniciar();
+})();
+</script>
+
+</body>
+</html>
