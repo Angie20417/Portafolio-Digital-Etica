@@ -52,9 +52,14 @@
 
   article.categoria{background:var(--color-surface); border:1px solid var(--color-line); border-radius:14px; padding:24px; margin-bottom:24px; scroll-margin-top:20px;}
   .cat-encabezado{border-bottom:2px solid var(--color-accent-soft); padding-bottom:14px; margin-bottom:18px;}
-  .cat-encabezado h2{font-family:var(--font-display); font-size:1.2rem; margin:0; color:var(--color-ink);}
+  .cat-encabezado h2{font-family:var(--font-display); font-size:1.35rem; margin:0; color:var(--color-ink);}
+  .actividad{border:1px solid var(--color-line); border-radius:10px; padding:18px 20px; margin-bottom:16px; background:#FFFEFB;}
+  .actividad:last-child{margin-bottom:0;}
+  .actividad h3{font-family:var(--font-display); font-size:1.02rem; margin:0 0 12px; color:var(--color-accent); border-bottom:1px solid var(--color-line); padding-bottom:8px;}
   ul.entradas{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px;}
+  ul.entradas + ul.entradas{margin-top:12px;}
   li.entrada{border:1px solid var(--color-line); border-radius:10px; padding:14px 16px; background:#FFFEFB; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;}
+  .actividad li.entrada{background:#fff;}
   .entrada-info{display:flex; flex-direction:column; gap:2px;}
   .entrada-titulo{font-weight:700; font-size:0.98rem;}
   .entrada-fecha{font-size:0.8rem; color:var(--color-ink-soft); text-transform:uppercase; letter-spacing:0.03em;}
@@ -98,7 +103,7 @@
   </div>
 </header>
 
-<nav class="indice" aria-label="Índice de categorías del portafolio">
+<nav class="indice" aria-label="Índice de cortes del portafolio">
   <h2>Contenido del portafolio</h2>
   <ul id="lista-indice"></ul>
 </nav>
@@ -142,6 +147,16 @@
     var ext = (nombre.split(".").pop() || "").toLowerCase();
     var mapa = { pdf:"PDF", doc:"Word", docx:"Word", ppt:"Presentación", pptx:"Presentación", xls:"Excel", xlsx:"Excel", jpg:"Imagen", jpeg:"Imagen", png:"Imagen", gif:"Imagen", mp4:"Video", mp3:"Audio", txt:"Texto" };
     return mapa[ext] || "Archivo";
+  }
+
+  var EXTENSIONES_OFFICE = ["doc","docx","ppt","pptx","xls","xlsx"];
+
+  function obtenerEnlaceVisualizacion(archivo){
+    var ext = (archivo.name.split(".").pop() || "").toLowerCase();
+    if (EXTENSIONES_OFFICE.indexOf(ext) !== -1){
+      return "https://view.officeapps.live.com/op/view.aspx?src=" + encodeURIComponent(archivo.download_url);
+    }
+    return archivo.download_url;
   }
 
   function interpretarNombre(nombreArchivo){
@@ -193,53 +208,82 @@
 
     var enlace = document.createElement("a");
     enlace.className = "entrada-descarga";
-    enlace.href = archivo.download_url;
+    enlace.href = obtenerEnlaceVisualizacion(archivo);
     enlace.target = "_blank";
     enlace.rel = "noopener";
-    enlace.textContent = "Abrir " + archivo.name + " (se abre en una pestaña nueva)";
+    enlace.textContent = "Ver " + archivo.name + " (se abre en una pestaña nueva)";
 
     li.appendChild(contenedorInfo);
     li.appendChild(enlace);
     return li;
   }
 
-  async function construirCategoria(carpeta){
+  function crearListaEntradas(archivos){
+    var lista = document.createElement("ul");
+    lista.className = "entradas";
+    if (!archivos.length){
+      var vacio = document.createElement("p");
+      vacio.className = "sin-evidencias";
+      vacio.textContent = "Todavía no hay evidencias aquí.";
+      lista.appendChild(vacio);
+    } else {
+      archivos.sort(function(a,b){ return a.name.localeCompare(b.name); });
+      archivos.forEach(function(archivo){
+        lista.appendChild(crearEntradaHTML(archivo));
+      });
+    }
+    return lista;
+  }
+
+  async function construirCorte(carpetaCorte){
     var articulo = document.createElement("article");
     articulo.className = "categoria";
-    var idCategoria = slug(carpeta.name);
-    articulo.id = idCategoria;
+    var idCorte = slug(carpetaCorte.name);
+    articulo.id = idCorte;
 
     var encabezado = document.createElement("div");
     encabezado.className = "cat-encabezado";
     var titulo = document.createElement("h2");
-    titulo.textContent = carpeta.name;
+    titulo.textContent = carpetaCorte.name;
     encabezado.appendChild(titulo);
     articulo.appendChild(encabezado);
 
-    var lista = document.createElement("ul");
-    lista.className = "entradas";
+    var contenido = await obtenerContenido(CARPETA_RAIZ + "/" + carpetaCorte.name);
+    contenido = contenido || [];
 
-    var archivos = await obtenerContenido(CARPETA_RAIZ + "/" + carpeta.name);
-    var archivosValidos = (archivos || []).filter(function(item){ return item.type === "file"; });
+    var archivosDirectos = contenido.filter(function(item){ return item.type === "file"; });
+    var subcarpetas = contenido.filter(function(item){ return item.type === "dir"; });
+    subcarpetas.sort(function(a,b){ return a.name.localeCompare(b.name); });
 
-    if (!archivosValidos.length){
-      var vacio = document.createElement("p");
-      vacio.className = "sin-evidencias";
-      vacio.textContent = "Todavía no hay evidencias en esta categoría.";
-      lista.appendChild(vacio);
-    } else {
-      archivosValidos.sort(function(a,b){ return a.name.localeCompare(b.name); });
-      archivosValidos.forEach(function(archivo){
-        lista.appendChild(crearEntradaHTML(archivo));
-      });
+    if (archivosDirectos.length){
+      articulo.appendChild(crearListaEntradas(archivosDirectos));
     }
 
-    articulo.appendChild(lista);
+    for (var i = 0; i < subcarpetas.length; i++){
+      var subcarpeta = subcarpetas[i];
+      var archivosActividad = await obtenerContenido(CARPETA_RAIZ + "/" + carpetaCorte.name + "/" + subcarpeta.name);
+      archivosActividad = (archivosActividad || []).filter(function(item){ return item.type === "file"; });
+
+      var bloqueActividad = document.createElement("div");
+      bloqueActividad.className = "actividad";
+      var h3 = document.createElement("h3");
+      h3.textContent = subcarpeta.name;
+      bloqueActividad.appendChild(h3);
+      bloqueActividad.appendChild(crearListaEntradas(archivosActividad));
+      articulo.appendChild(bloqueActividad);
+    }
+
+    if (!archivosDirectos.length && !subcarpetas.length){
+      var vacioTotal = document.createElement("p");
+      vacioTotal.className = "sin-evidencias";
+      vacioTotal.textContent = "Todavía no hay evidencias en este corte.";
+      articulo.appendChild(vacioTotal);
+    }
 
     var li = document.createElement("li");
     var a = document.createElement("a");
-    a.href = "#" + idCategoria;
-    a.textContent = carpeta.name;
+    a.href = "#" + idCorte;
+    a.textContent = carpetaCorte.name;
     li.appendChild(a);
     listaIndice.appendChild(li);
 
@@ -264,7 +308,7 @@
       carpetas.sort(function(a,b){ return a.name.localeCompare(b.name); });
 
       for (var i = 0; i < carpetas.length; i++){
-        var articulo = await construirCategoria(carpetas[i]);
+        var articulo = await construirCorte(carpetas[i]);
         contenedorCategorias.appendChild(articulo);
       }
 
