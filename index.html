@@ -60,11 +60,11 @@
   ul.entradas + ul.entradas{margin-top:12px;}
   li.entrada{border:1px solid var(--color-line); border-radius:10px; padding:14px 16px; background:#FFFEFB; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;}
   .actividad li.entrada{background:#fff;}
-  .entrada-info{display:flex; flex-direction:column; gap:2px;}
-  .entrada-titulo{font-weight:700; font-size:0.98rem;}
+  .entrada-info{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .entrada-titulo{font-weight:700; font-size:0.98rem; overflow-wrap:anywhere;}
   .entrada-fecha{font-size:0.8rem; color:var(--color-ink-soft); text-transform:uppercase; letter-spacing:0.03em;}
   .badge{display:inline-block; background:var(--color-accent-soft); color:var(--color-accent); padding:3px 10px; border-radius:999px; font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin-right:8px;}
-  .entrada-descarga{font-weight:600; white-space:nowrap;}
+  .entrada-descarga{font-weight:600; overflow-wrap:anywhere; min-width:0; max-width:100%;}
   p.sin-evidencias{color:var(--color-ink-soft); font-style:italic; font-size:0.92rem;}
 
   footer{text-align:center; padding:28px 24px 40px; color:var(--color-ink-soft); font-size:0.86rem;}
