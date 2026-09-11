@@ -149,12 +149,15 @@
     return mapa[ext] || "Archivo";
   }
 
-  var EXTENSIONES_VISOR = ["pdf","doc","docx","ppt","pptx","xls","xlsx"];
+  var EXTENSIONES_OFFICE = ["doc","docx","ppt","pptx","xls","xlsx"];
 
   function obtenerEnlaceVisualizacion(archivo){
     var ext = (archivo.name.split(".").pop() || "").toLowerCase();
-    if (EXTENSIONES_VISOR.indexOf(ext) !== -1){
-      return "https://docs.google.com/viewer?url=" + encodeURIComponent(archivo.download_url) + "&embedded=true";
+    if (ext === "pdf"){
+      return archivo.html_url;
+    }
+    if (EXTENSIONES_OFFICE.indexOf(ext) !== -1){
+      return "https://view.officeapps.live.com/op/view.aspx?src=" + encodeURIComponent(archivo.download_url);
     }
     return archivo.download_url;
   }
@@ -211,7 +214,7 @@
     enlace.href = obtenerEnlaceVisualizacion(archivo);
     enlace.target = "_blank";
     enlace.rel = "noopener";
-    enlace.textContent = "Ver " + archivo.name + " (se abre en una pestaña nueva)";
+    enlace.textContent = "Ver archivo (se abre en una pestaña nueva)";
 
     li.appendChild(contenedorInfo);
     li.appendChild(enlace);
