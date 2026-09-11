@@ -51,8 +51,12 @@
   #mensaje-error{display:none; background:var(--color-danger-bg); border:1px solid var(--color-danger); color:var(--color-danger); border-radius:10px; padding:16px 20px; margin-bottom:20px; font-weight:600;}
 
   article.categoria{background:var(--color-surface); border:1px solid var(--color-line); border-radius:14px; padding:24px; margin-bottom:24px; scroll-margin-top:20px;}
-  .cat-encabezado{border-bottom:2px solid var(--color-accent-soft); padding-bottom:14px; margin-bottom:18px;}
+  .cat-encabezado{border-bottom:2px solid var(--color-accent-soft); padding-bottom:14px; margin-bottom:18px; display:flex; align-items:center; gap:10px;}
   .cat-encabezado h2{font-family:var(--font-display); font-size:1.35rem; margin:0; color:var(--color-ink);}
+  .cat-ornamento{flex-shrink:0; display:inline-flex;}
+  .separador-corte{display:flex; align-items:center; justify-content:center; gap:10px; margin:0 0 24px;}
+  .separador-corte .linea{flex:1; max-width:220px; height:1px; background:var(--color-line);}
+  .separador-corte .rombo{width:7px; height:7px; background:var(--color-accent-soft); border:1px solid var(--color-accent); transform:rotate(45deg);}
   .actividad{border:1px solid var(--color-line); border-radius:10px; padding:18px 20px; margin-bottom:16px; background:#FFFEFB;}
   .actividad:last-child{margin-bottom:0;}
   .actividad h3{font-family:var(--font-display); font-size:1.02rem; margin:0 0 12px; color:var(--color-accent); border-bottom:1px solid var(--color-line); padding-bottom:8px;}
@@ -63,7 +67,8 @@
   .entrada-info{display:flex; flex-direction:column; gap:2px; min-width:0;}
   .entrada-titulo{font-weight:700; font-size:0.98rem; overflow-wrap:anywhere;}
   .entrada-fecha{font-size:0.8rem; color:var(--color-ink-soft); text-transform:uppercase; letter-spacing:0.03em;}
-  .badge{display:inline-block; background:var(--color-accent-soft); color:var(--color-accent); padding:3px 10px; border-radius:999px; font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin-right:8px;}
+  .badge{display:inline-flex; align-items:center; gap:4px; background:var(--color-accent-soft); color:var(--color-accent); padding:3px 10px 3px 8px; border-radius:999px; font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin-right:8px; vertical-align:middle;}
+  .badge-icono{flex-shrink:0;}
   .entrada-descarga{font-weight:600; overflow-wrap:anywhere; min-width:0; max-width:100%;}
   p.sin-evidencias{color:var(--color-ink-soft); font-style:italic; font-size:0.92rem;}
 
@@ -143,10 +148,34 @@
     return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-");
   }
 
-  function badgeParaArchivo(nombre){
+  var ICONOS_ARCHIVO = {
+    pdf: '<path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 2v5h5" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="7" y="17" font-size="6" font-weight="700" fill="currentColor">PDF</text>',
+    doc: '<path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 2v5h5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="13" x2="16" y2="13" stroke="currentColor" stroke-width="1.4"/><line x1="8" y1="17" x2="16" y2="17" stroke="currentColor" stroke-width="1.4"/>',
+    ppt: '<path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 2v5h5" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="8" y="12" width="8" height="6" fill="none" stroke="currentColor" stroke-width="1.4"/>',
+    xls: '<path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 2v5h5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="12" x2="16" y2="18" stroke="currentColor" stroke-width="1.4"/><line x1="16" y1="12" x2="8" y2="18" stroke="currentColor" stroke-width="1.4"/>',
+    img: '<rect x="3" y="4" width="18" height="16" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="9" cy="10" r="1.6" fill="currentColor"/><path d="M4 17l5-5 4 4 3-3 5 5" fill="none" stroke="currentColor" stroke-width="1.6"/>',
+    otro: '<path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 2v5h5" fill="none" stroke="currentColor" stroke-width="1.6"/>'
+  };
+
+  function infoBadgeArchivo(nombre){
     var ext = (nombre.split(".").pop() || "").toLowerCase();
-    var mapa = { pdf:"PDF", doc:"Word", docx:"Word", ppt:"Presentación", pptx:"Presentación", xls:"Excel", xlsx:"Excel", jpg:"Imagen", jpeg:"Imagen", png:"Imagen", gif:"Imagen", mp4:"Video", mp3:"Audio", txt:"Texto" };
-    return mapa[ext] || "Archivo";
+    var mapa = {
+      pdf:  { texto:"PDF",          color:"#B5533C", icono:ICONOS_ARCHIVO.pdf },
+      doc:  { texto:"Word",         color:"#39548C", icono:ICONOS_ARCHIVO.doc },
+      docx: { texto:"Word",         color:"#39548C", icono:ICONOS_ARCHIVO.doc },
+      ppt:  { texto:"Presentación", color:"#A87B12", icono:ICONOS_ARCHIVO.ppt },
+      pptx: { texto:"Presentación", color:"#A87B12", icono:ICONOS_ARCHIVO.ppt },
+      xls:  { texto:"Excel",        color:"#3F6B4A", icono:ICONOS_ARCHIVO.xls },
+      xlsx: { texto:"Excel",        color:"#3F6B4A", icono:ICONOS_ARCHIVO.xls },
+      jpg:  { texto:"Imagen",       color:"#4B7A73", icono:ICONOS_ARCHIVO.img },
+      jpeg: { texto:"Imagen",       color:"#4B7A73", icono:ICONOS_ARCHIVO.img },
+      png:  { texto:"Imagen",       color:"#4B7A73", icono:ICONOS_ARCHIVO.img },
+      gif:  { texto:"Imagen",       color:"#4B7A73", icono:ICONOS_ARCHIVO.img },
+      mp4:  { texto:"Video",        color:"#6B4A8A", icono:ICONOS_ARCHIVO.otro },
+      mp3:  { texto:"Audio",        color:"#6B4A8A", icono:ICONOS_ARCHIVO.otro },
+      txt:  { texto:"Texto",        color:"#6B655A", icono:ICONOS_ARCHIVO.otro }
+    };
+    return mapa[ext] || { texto:"Archivo", color:"#6B655A", icono:ICONOS_ARCHIVO.otro };
   }
 
   var EXTENSIONES_VISOR = ["pdf","doc","docx","ppt","pptx","xls","xlsx"];
@@ -192,9 +221,12 @@
 
     var titulo = document.createElement("span");
     titulo.className = "entrada-titulo";
+    var info2 = infoBadgeArchivo(archivo.name);
     var badge = document.createElement("span");
     badge.className = "badge";
-    badge.textContent = badgeParaArchivo(archivo.name);
+    badge.style.color = info2.color;
+    badge.style.background = info2.color + "1A";
+    badge.innerHTML = '<svg class="badge-icono" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">' + info2.icono + '</svg>' + info2.texto;
     titulo.appendChild(badge);
     titulo.appendChild(document.createTextNode(info.titulo));
     contenedorInfo.appendChild(titulo);
@@ -243,8 +275,12 @@
 
     var encabezado = document.createElement("div");
     encabezado.className = "cat-encabezado";
+    var ornamento = document.createElement("span");
+    ornamento.className = "cat-ornamento";
+    ornamento.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3c-3 2-5 5-5 9a5 5 0 0 0 10 0c0-4-2-7-5-9z" fill="none" stroke="#8A6A22" stroke-width="1.4"/><path d="M12 6v13" fill="none" stroke="#8A6A22" stroke-width="1.2"/></svg>';
     var titulo = document.createElement("h2");
     titulo.textContent = carpetaCorte.name;
+    encabezado.appendChild(ornamento);
     encabezado.appendChild(titulo);
     articulo.appendChild(encabezado);
 
@@ -308,6 +344,13 @@
       carpetas.sort(function(a,b){ return a.name.localeCompare(b.name); });
 
       for (var i = 0; i < carpetas.length; i++){
+        if (i > 0){
+          var separador = document.createElement("div");
+          separador.className = "separador-corte";
+          separador.setAttribute("aria-hidden", "true");
+          separador.innerHTML = '<span class="linea"></span><span class="rombo"></span><span class="linea"></span>';
+          contenedorCategorias.appendChild(separador);
+        }
         var articulo = await construirCorte(carpetas[i]);
         contenedorCategorias.appendChild(articulo);
       }
