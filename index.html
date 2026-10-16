@@ -84,7 +84,9 @@
   .entrada-fecha{font-size:0.8rem; color:var(--color-ink-soft); text-transform:uppercase; letter-spacing:0.03em;}
   .badge{display:inline-flex; align-items:center; gap:4px; background:var(--color-accent-soft); color:var(--color-accent); padding:3px 10px 3px 8px; border-radius:999px; font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin-right:8px; vertical-align:middle;}
   .badge-icono{flex-shrink:0;}
-  .entrada-descarga{grid-column:2; font-weight:600; overflow-wrap:anywhere; min-width:0; max-width:100%;}
+  .entrada-descarga{grid-column:2; font-weight:600; overflow-wrap:anywhere; min-width:0; max-width:100%; display:inline-flex; align-items:center; gap:6px; justify-self:start;}
+  .icono-externo{flex-shrink:0;}
+  .solo-lectores{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
   p.sin-evidencias{color:var(--color-ink-soft); font-style:italic; font-size:0.92rem;}
 
   footer{text-align:center; padding:28px 24px 40px; color:var(--color-ink-soft); font-size:0.86rem;}
@@ -224,15 +226,36 @@
     return archivo.download_url;
   }
 
+  var PALABRAS_MENORES = ["de","del","la","las","el","los","y","e","o","u","en","a","al","un","una","por","para","con","sin","que","se","su","sus","lo","les","mi","tu","ni","es","son","sobre","entre","como","mas"];
+
+  var ACRONIMOS_CONOCIDOS = ["sena","dian","unam","icbf","inpec","brics","dane","corhuila","invima","ods","rsi","rse","onu","oit","omc","fmi","pib","tlc","ong","icetex","ucc","usa"];
+
+  function formatearTitulo(texto){
+    var letras = texto.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g, "");
+    var todoMayusculas = letras.length > 3 && letras === letras.toUpperCase();
+    var palabras = texto.split(" ");
+    if (todoMayusculas){
+      palabras = palabras.map(function(p){
+        var base = p.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g, "");
+        var baseSinTilde = normalizarTexto(base);
+        var esConocida = ACRONIMOS_CONOCIDOS.indexOf(baseSinTilde) !== -1;
+        var esSigla = esConocida || (base.length >= 2 && base.length <= 3 && PALABRAS_MENORES.indexOf(baseSinTilde) === -1);
+        return esSigla ? p : p.toLowerCase();
+      });
+    }
+    var resultado = palabras.join(" ");
+    return resultado.charAt(0).toUpperCase() + resultado.slice(1);
+  }
+
   function interpretarNombre(nombreArchivo){
     var sinExtension = nombreArchivo.replace(/\.[^.]+$/, "");
     var coincide = sinExtension.match(/^(\d{4}-\d{2}-\d{2})\s*[-–]\s*(.+)$/);
     if (coincide){
       var partes = coincide[1].split("-");
       var fechaLegible = partes[2] + " de " + (meses[parseInt(partes[1],10)-1] || partes[1]) + " de " + partes[0];
-      return { titulo: coincide[2], fecha: fechaLegible };
+      return { titulo: formatearTitulo(coincide[2]), fecha: fechaLegible };
     }
-    return { titulo: sinExtension, fecha: "" };
+    return { titulo: formatearTitulo(sinExtension), fecha: "" };
   }
 
   async function obtenerContenido(ruta){
@@ -288,7 +311,7 @@
     enlace.href = obtenerEnlaceVisualizacion(archivo);
     enlace.target = "_blank";
     enlace.rel = "noopener";
-    enlace.textContent = "Ver archivo (se abre en una pestaña nueva)";
+    enlace.innerHTML = 'Ver archivo<svg class="icono-externo" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="solo-lectores"> (se abre en una pestaña nueva)</span>';
 
     li.appendChild(contenedorInfo);
     li.appendChild(enlace);
@@ -296,7 +319,8 @@
   }
 
   function esEvidenciaVisible(item){
-    return item.type === "file" && item.name.toLowerCase() !== "marcador.txt" && item.name.charAt(0) !== ".";
+    var nombreLimpio = item.name.toLowerCase().replace(/[.\s]+$/, "");
+    return item.type === "file" && nombreLimpio !== "marcador.txt" && item.name.charAt(0) !== ".";
   }
 
   function crearListaEntradas(archivos){
